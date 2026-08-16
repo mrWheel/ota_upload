@@ -8,5 +8,5 @@
 
 #include "esp_err.h"
 
-esp_err_t ota_manager_mdns_start(const char *hostname, uint16_t port);
-void ota_manager_mdns_stop(void);
+esp_err_t ota_upload_mdns_start(const char *hostname, uint16_t port);
+void ota_upload_mdns_stop(void);

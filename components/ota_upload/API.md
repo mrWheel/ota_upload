@@ -1,6 +1,6 @@
 # API
 
-## `ota_manager_config_t`
+## `ota_upload_config_t`
 
 Runtime configuration for the OTA service.
 
@@ -11,11 +11,11 @@ Fields:
 - `enable_mdns` — advertise `_esp-ota._tcp`
 - `reboot_after_update` — reboot after a validated image becomes bootable
 
-## `OTA_MANAGER_CONFIG_DEFAULT()`
+## `OTA_UPLOAD_CONFIG_DEFAULT()`
 
 Creates a configuration using Kconfig defaults.
 
-## `ota_manager_start()`
+## `ota_upload_start()`
 
 Starts mDNS (when enabled) and the OTA receiver task.
 
@@ -35,9 +35,9 @@ static void ip_event_handler(void *arg, esp_event_base_t event_base,
 {
   if (event_id == IP_EVENT_STA_GOT_IP)
   {
-    ota_manager_config_t config = OTA_MANAGER_CONFIG_DEFAULT();
+    ota_upload_config_t config = OTA_UPLOAD_CONFIG_DEFAULT();
     config.hostname = "mydevice";
-    ESP_ERROR_CHECK(ota_manager_start(&config));
+    ESP_ERROR_CHECK(ota_upload_start(&config));
   }
 }
 
@@ -57,11 +57,11 @@ void app_main(void)
 
 See the `examples/basic/main/main.c` for a complete working example.
 
-## `ota_manager_stop()`
+## `ota_upload_stop()`
 
 Reserved public API. In the current v0.1.0 skeleton graceful shutdown of the
 blocking listener is not yet implemented and returns `ESP_ERR_NOT_SUPPORTED`.
 
-## `ota_manager_is_running()`
+## `ota_upload_is_running()`
 
 Returns whether the receiver task has been created.

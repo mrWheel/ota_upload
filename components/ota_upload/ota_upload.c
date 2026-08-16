@@ -1,8 +1,8 @@
 //-- SPDX-License-Identifier: GPL-3.0-or-later
 //-- Copyright (C) 2026 Willem Aandewiel
 
-#include "ota_manager.h"
-#include "ota_manager_internal.h"
+#include "ota_upload.h"
+#include "ota_upload_internal.h"
 
 #include <errno.h>
 #include <inttypes.h>
@@ -18,19 +18,19 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-#define OTA_MANAGER_MAGIC "OTAMGR01"
-#define OTA_MANAGER_MAGIC_LEN 8
-#define OTA_MANAGER_BUFFER_SIZE 4096
+#define OTA_UPLOAD_MAGIC "OTAMGR01"
+#define OTA_UPLOAD_MAGIC_LEN 8
+#define OTA_UPLOAD_BUFFER_SIZE 4096
 
 typedef struct __attribute__((packed))
 {
-  char magic[OTA_MANAGER_MAGIC_LEN];
+  char magic[OTA_UPLOAD_MAGIC_LEN];
   uint32_t image_size_be;
-} ota_manager_wire_header_t;
+} ota_upload_wire_header_t;
 
-static const char *tag = "ota_manager";
+static const char *tag = "ota_upload";
 static TaskHandle_t ota_task_handle;
-static ota_manager_config_t active_config;
+static ota_upload_config_t active_config;
 static char active_hostname[64];
 
 static uint32_t read_u32_be(uint32_t value)
@@ -67,7 +67,7 @@ static void send_status(int sock, const char *status)
 
 static esp_err_t handle_upload(int client_sock)
 {
-  ota_manager_wire_header_t header;
+  ota_upload_wire_header_t header;
 
   if (recv_exact(client_sock, &header, sizeof(header)) != ESP_OK)
   {
@@ -75,7 +75,7 @@ static esp_err_t handle_upload(int client_sock)
     return ESP_FAIL;
   }
 
-  if (memcmp(header.magic, OTA_MANAGER_MAGIC, OTA_MANAGER_MAGIC_LEN) != 0)
+  if (memcmp(header.magic, OTA_UPLOAD_MAGIC, OTA_UPLOAD_MAGIC_LEN) != 0)
   {
     send_status(client_sock, "ERR protocol\n");
     return ESP_ERR_INVALID_ARG;
@@ -111,7 +111,7 @@ static esp_err_t handle_upload(int client_sock)
     return err;
   }
 
-  uint8_t buffer[OTA_MANAGER_BUFFER_SIZE];
+  uint8_t buffer[OTA_UPLOAD_BUFFER_SIZE];
   uint32_t total_received = 0;
 
   while (total_received < image_size)
@@ -168,7 +168,7 @@ static esp_err_t handle_upload(int client_sock)
   return ESP_OK;
 }
 
-static void ota_manager_task(void *arg)
+static void ota_upload_task(void *arg)
 {
   int listen_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
   if (listen_sock < 0)
@@ -230,7 +230,7 @@ static void ota_manager_task(void *arg)
   }
 }
 
-esp_err_t ota_manager_start(const ota_manager_config_t *config)
+esp_err_t ota_upload_start(const ota_upload_config_t *config)
 {
   if (config == NULL || config->hostname == NULL || config->port == 0)
   {
@@ -248,7 +248,7 @@ esp_err_t ota_manager_start(const ota_manager_config_t *config)
 
   if (active_config.enable_mdns)
   {
-    esp_err_t err = ota_manager_mdns_start(active_hostname,
+    esp_err_t err = ota_upload_mdns_start(active_hostname,
                                            active_config.port);
     if (err != ESP_OK)
     {
@@ -257,16 +257,16 @@ esp_err_t ota_manager_start(const ota_manager_config_t *config)
   }
 
   BaseType_t result = xTaskCreate(
-      ota_manager_task,
-      "ota_manager",
-      CONFIG_OTA_MANAGER_TASK_STACK_SIZE,
+      ota_upload_task,
+      "ota_upload",
+      CONFIG_OTA_UPLOAD_TASK_STACK_SIZE,
       NULL,
-      CONFIG_OTA_MANAGER_TASK_PRIORITY,
+      CONFIG_OTA_UPLOAD_TASK_PRIORITY,
       &ota_task_handle);
 
   if (result != pdPASS)
   {
-    ota_manager_mdns_stop();
+    ota_upload_mdns_stop();
     ota_task_handle = NULL;
     return ESP_ERR_NO_MEM;
   }
@@ -274,7 +274,7 @@ esp_err_t ota_manager_start(const ota_manager_config_t *config)
   return ESP_OK;
 }
 
-esp_err_t ota_manager_stop(void)
+esp_err_t ota_upload_stop(void)
 {
   if (ota_task_handle == NULL)
   {
@@ -289,7 +289,7 @@ esp_err_t ota_manager_stop(void)
   return ESP_ERR_NOT_SUPPORTED;
 }
 
-bool ota_manager_is_running(void)
+bool ota_upload_is_running(void)
 {
   return ota_task_handle != NULL;
 }

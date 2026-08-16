@@ -7,7 +7,7 @@
   "clangd.arguments": [
     "--background-index",
     "--query-driver=**",
-    "--compile-commands-dir=/Users/willema/Documents/espidfProjects/ota_manager_project/build"
+    "--compile-commands-dir=/Users/willema/Documents/espidfProjects/ota_upload/build"
   ],
   "idf.flashType": "UART",
   "idf.port": "/dev/tty.usbserial-1430",

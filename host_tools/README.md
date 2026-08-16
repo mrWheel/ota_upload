@@ -1,6 +1,6 @@
-# ota-manager-tools
+# ota-upload-tools
 
-Host-side companion package for the ESP-IDF `ota_manager` component.
+Host-side companion package for the ESP-IDF `ota_upload` component.
 
 Install into the same Python environment used by ESP-IDF:
 

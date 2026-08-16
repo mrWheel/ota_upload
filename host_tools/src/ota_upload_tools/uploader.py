@@ -55,7 +55,7 @@ def upload_firmware(host: str, firmware: Path, port: int = DEFAULT_PORT,
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Upload an ESP-IDF application image to ota_manager")
+        description="Upload an ESP-IDF application image to ota_upload")
     parser.add_argument("firmware", type=Path)
     parser.add_argument("--host", required=True)
     parser.add_argument("--port", type=int, default=DEFAULT_PORT)

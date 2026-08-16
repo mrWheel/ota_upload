@@ -1,8 +1,20 @@
-# ota_manager basic example
+# ota_upload basic example
 
 This example demonstrates direct OTA firmware upload with Wi-Fi provisioning.
 
 ## Quick start
+
+### Flash size requirement
+
+This OTA example requires a flash size of at least **4 MB**. The default is
+already set to 4 MB. To change it for a board with a larger flash, run:
+
+```bash
+idf.py menuconfig
+```
+
+Select **Serial Flasher config** → **Flash size**, choose **4 MB** or larger,
+save, and rebuild with `idf.py build`.
 
 ### 1. First flash (USB)
 
@@ -37,13 +49,13 @@ Once the device is connected to Wi-Fi, verify it is discoverable:
 
 ```bash
 # Ping by hostname
-ping ota-manager-example.local
+ping ota-upload-example.local
 
 # Or browse mDNS services
 dns-sd -B _esp-ota._tcp local
 ```
 
-You should see the device advertised as "ESP-IDF OTA Manager".
+You should see the device advertised as "ESP-IDF OTA Upload".
 
 ### 4. OTA upload
 
@@ -57,7 +69,7 @@ Then upload firmware by hostname:
 
 ```bash
 idf.py build
-idf.py ota --host ota-manager-example.local
+idf.py ota --host ota-upload-example.local
 ```
 
 Or by IP address if mDNS is not working:
@@ -72,15 +84,15 @@ The device will validate and reboot with the new firmware.
 
 ### mDNS hostname not resolving
 
-**Problem:** `ping ota-manager-example.local` fails with "nodename nor servname provided"
+**Problem:** `ping ota-upload-example.local` fails with "nodename nor servname provided"
 
 **Cause:** mDNS is only advertised after the WiFi interface has acquired an IP address.
 
-**Solution:** Wait for the serial output to show "OTA manager ready" before attempting
+**Solution:** Wait for the serial output to show "OTA upload ready" before attempting
 to resolve the hostname. Check that:
 
 1. The device shows "IP address acquired" in the logs
-2. The device shows "OTA manager ready at ota-manager-example.local" 
+2. The device shows "OTA upload ready at ota-upload-example.local"
 3. Your computer can resolve `.local` domains (mDNS/Bonjour support)
 
 On macOS/Linux, this typically works out of the box. On Windows, ensure Bonjour is installed.

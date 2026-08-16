@@ -11,13 +11,13 @@ config EXAMPLE_WIFI_SSID
     default ""
     depends on !EXAMPLE_USE_WIFI_PROVISIONING
     help
-        SSID used by the ota_manager development application (when provisioning disabled).
+        SSID used by the ota_upload development application (when provisioning disabled).
 
 config EXAMPLE_WIFI_PASSWORD
     string "Wi-Fi password"
     default ""
     depends on !EXAMPLE_USE_WIFI_PROVISIONING
     help
-        Password used by the ota_manager development application (when provisioning disabled).
+        Password used by the ota_upload development application (when provisioning disabled).
 
 endmenu

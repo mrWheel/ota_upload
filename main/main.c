@@ -11,7 +11,7 @@
 #include "freertos/event_groups.h"
 #include "nvs_flash.h"
 
-#include "ota_manager.h"
+#include "ota_upload.h"
 
 static const char *tag = "ota_example";
 static EventGroupHandle_t wifi_event_group;
@@ -90,11 +90,11 @@ void app_main(void)
 
   ESP_ERROR_CHECK(wifi_start());
 
-  ota_manager_config_t ota_config = OTA_MANAGER_CONFIG_DEFAULT();
-  ota_config.hostname = "ota-manager";
+  ota_upload_config_t ota_config = OTA_UPLOAD_CONFIG_DEFAULT();
+  ota_config.hostname = "ota-upload";
 
-  ESP_ERROR_CHECK(ota_manager_start(&ota_config));
+  ESP_ERROR_CHECK(ota_upload_start(&ota_config));
 
-  ESP_LOGI(tag, "OTA manager ready at ota-manager.local:%u",
+  ESP_LOGI(tag, "OTA upload ready at ota-upload.local:%u",
            (unsigned)ota_config.port);
 }

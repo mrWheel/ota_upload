@@ -1,15 +1,15 @@
-# Project Prompt — ESP-IDF `ota_manager`
+# Project Prompt — ESP-IDF `ota_upload`
 
 ## 1. Project goal
 
-Create a production-quality, reusable ESP-IDF component named `ota_manager`.
+Create a production-quality, reusable ESP-IDF component named `ota_upload`.
 
 The component must allow a developer to upload newly built ESP-IDF application firmware directly from the development computer to an ESP32 over the local network (Wi-Fi), without requiring an external web server, cloud service, AWS server, or firmware-hosting service.
 
 The intended developer experience is comparable to ArduinoOTA / PlatformIO OTA:
 
 1. The first firmware installation is performed over USB.
-2. The firmware contains `ota_manager`.
+2. The firmware contains `ota_upload`.
 3. Subsequent application firmware updates can be sent directly from the developer's computer to the ESP32 over the LAN.
 4. The ESP32 writes the received application image to the inactive OTA partition.
 5. After successful validation, the new OTA partition becomes the boot partition.
@@ -41,10 +41,10 @@ This applies to:
 Examples:
 
 ```c
-ota_manager_start();
-ota_manager_stop();
-ota_manager_config_t;
-ota_manager_get_status();
+ota_upload_start();
+ota_upload_stop();
+ota_upload_config_t;
+ota_upload_get_status();
 ```
 
 Do **not** use:
@@ -60,8 +60,8 @@ ESP-IDF/ESP-IDF-style conventions should be followed where they make sense.
 Constants and Kconfig symbols may use the normal uppercase convention:
 
 ```c
-CONFIG_OTA_MANAGER_PORT
-OTA_MANAGER_DEFAULT_PORT
+CONFIG_OTA_UPLOAD_PORT
+OTA_UPLOAD_DEFAULT_PORT
 ```
 
 ---
@@ -208,12 +208,12 @@ The component should allow the application to configure a hostname.
 For example:
 
 ```c
-ota_manager_config_t config = {
+ota_upload_config_t config = {
     .hostname = "thisProject",
     .port = 3232,
 };
 
-ESP_ERROR_CHECK(ota_manager_start(&config));
+ESP_ERROR_CHECK(ota_upload_start(&config));
 ```
 
 Use designated initializers and provide sensible defaults.
@@ -353,7 +353,7 @@ is enabled.
 Therefore a component published under a namespace such as:
 
 ```text
-mrwheel/ota_manager
+mrwheel/ota_upload
 ```
 
 must **not** rely on an automatically loaded `idf_ext.py` unless this behavior has been verified for the targeted ESP-IDF versions.
@@ -374,7 +374,7 @@ Possible architecture:
 
 ```text
 ESP Component Registry
-    mrwheel/ota_manager
+    mrwheel/ota_upload
         |
         +--> embedded ESP-IDF component
 
@@ -442,8 +442,8 @@ Suggested structure:
 
 ```text
 Component config
-  -> OTA Manager
-       [*] Enable OTA Manager
+  -> OTA Upload
+       [*] Enable OTA Upload
        Default OTA port
        [*] Enable mDNS
        Default hostname / hostname behavior
@@ -451,7 +451,7 @@ Component config
        Logging options where useful
 ```
 
-Do not put configuration into Kconfig when it is clearly better supplied at runtime by `ota_manager_config_t`.
+Do not put configuration into Kconfig when it is clearly better supplied at runtime by `ota_upload_config_t`.
 
 Establish a clean distinction between:
 
@@ -467,21 +467,21 @@ Keep the public API small.
 A possible initial API is:
 
 ```c
-#include "ota_manager.h"
+#include "ota_upload.h"
 
-ota_manager_config_t config = OTA_MANAGER_CONFIG_DEFAULT();
+ota_upload_config_t config = OTA_UPLOAD_CONFIG_DEFAULT();
 
 config.hostname = "thisProject";
 
-ESP_ERROR_CHECK(ota_manager_start(&config));
+ESP_ERROR_CHECK(ota_upload_start(&config));
 ```
 
 Potential API:
 
 ```c
-esp_err_t ota_manager_start(const ota_manager_config_t *config);
-esp_err_t ota_manager_stop(void);
-bool ota_manager_is_running(void);
+esp_err_t ota_upload_start(const ota_upload_config_t *config);
+esp_err_t ota_upload_stop(void);
+bool ota_upload_is_running(void);
 ```
 
 Only add public functions that have a real use case.
@@ -605,7 +605,7 @@ Use the `targets` metadata in `idf_component.yml` when appropriate.
 The repository/component should be structured approximately as follows, adjusting where necessary after implementing the host-side Python packaging correctly:
 
 ```text
-ota_manager/
+ota_upload/
 ├── CMakeLists.txt
 ├── idf_component.yml
 ├── Kconfig
@@ -615,11 +615,11 @@ ota_manager/
 ├── CHANGELOG.md
 │
 ├── include/
-│   └── ota_manager.h
+│   └── ota_upload.h
 │
-├── ota_manager.c
-├── ota_manager_network.c
-├── ota_manager_mdns.c
+├── ota_upload.c
+├── ota_upload_network.c
+├── ota_upload_mdns.c
 │
 ├── private_include/
 │   └── ...
@@ -708,7 +708,7 @@ The example must demonstrate:
 
 1. Wi-Fi initialization;
 2. network connection;
-3. starting `ota_manager`;
+3. starting `ota_upload`;
 4. mDNS/OTA availability;
 5. first USB flash;
 6. subsequent OTA upload.
@@ -728,7 +728,7 @@ The documentation should lead toward a workflow similar to:
 ### Add the component
 
 ```bash
-idf.py add-dependency "mrwheel/ota_manager^0.1.0"
+idf.py add-dependency "mrwheel/ota_upload^0.1.0"
 ```
 
 The exact namespace must be replaced by the actual Registry namespace when known.
@@ -922,7 +922,7 @@ idf.py ota
 not:
 
 ```bash
-python managed_components/mrwheel__ota_manager/tools/ota_upload.py \
+python managed_components/mrwheel__ota_upload/tools/ota_upload.py \
     thisProject.local \
     build/thisProject.bin
 ```
@@ -955,7 +955,7 @@ If a separate Python package is required to achieve a safe, convenient `idf.py o
 
 Produce a complete repository ready for development and eventual publication, containing:
 
-1. `ota_manager` ESP-IDF component;
+1. `ota_upload` ESP-IDF component;
 2. public header/API;
 3. OTA receiver;
 4. mDNS support;

@@ -10,7 +10,7 @@
 - NVS-based state tracking
 
 ### Network & Discovery
-- mDNS hostname support (`ota-manager-example.local`)
+- mDNS hostname support (`ota-upload-example.local`)
 - mDNS service advertisement:
   - `_esp-ota._tcp` — OTA firmware update service
   - `_http._tcp` — HTTP service (for future web interface and standard discovery)

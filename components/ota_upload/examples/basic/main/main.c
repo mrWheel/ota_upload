@@ -7,13 +7,13 @@
 #include "esp_netif_types.h"
 #include "freertos/FreeRTOS.h"
 
-#include "ota_manager.h"
+#include "ota_upload.h"
 #include "wifi_provisioner.h"
 
 static const char *tag = "ota_example";
-static bool ota_manager_started = false;
+static bool ota_upload_started = false;
 
-//-- Start OTA manager when IP address is acquired
+//-- Start OTA upload when IP address is acquired
 static void ip_event_handler(void *arg, esp_event_base_t event_base,
                              int32_t event_id, void *event_data)
 {
@@ -24,22 +24,22 @@ static void ip_event_handler(void *arg, esp_event_base_t event_base,
     ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
     ESP_LOGI(tag, "IP address acquired: " IPSTR, IP2STR(&event->ip_info.ip));
 
-    if (!ota_manager_started)
+    if (!ota_upload_started)
     {
-      ota_manager_config_t ota_config = OTA_MANAGER_CONFIG_DEFAULT();
-      ota_config.hostname = "ota-manager-example";
+      ota_upload_config_t ota_config = OTA_UPLOAD_CONFIG_DEFAULT();
+      ota_config.hostname = "ota-upload-example";
 
-      ESP_LOGI(tag, "Starting OTA manager with hostname: %s", ota_config.hostname);
-      esp_err_t err = ota_manager_start(&ota_config);
+      ESP_LOGI(tag, "Starting OTA upload with hostname: %s", ota_config.hostname);
+      esp_err_t err = ota_upload_start(&ota_config);
       if (err == ESP_OK)
       {
-        ota_manager_started = true;
-        ESP_LOGI(tag, "OTA manager ready at ota-manager-example.local:%u",
+        ota_upload_started = true;
+        ESP_LOGI(tag, "OTA upload ready at ota-upload-example.local:%u",
                  (unsigned)ota_config.port);
       }
       else
       {
-        ESP_LOGE(tag, "Failed to start OTA manager: %s",
+        ESP_LOGE(tag, "Failed to start OTA upload: %s",
                  esp_err_to_name(err));
       }
     }
@@ -77,5 +77,5 @@ void app_main(void)
 {
   ESP_ERROR_CHECK(wifi_start());
 
-  //-- OTA manager will be started by the IP event handler once IP is acquired
+  //-- OTA upload will be started by the IP event handler once IP is acquired
 }

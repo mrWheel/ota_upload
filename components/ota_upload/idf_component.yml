@@ -8,11 +8,11 @@ tags:
   - wifi
   - firmware
   - development
-url: "https://github.com/mrWheel/ota_manager"
-repository: "https://github.com/mrWheel/ota_manager.git"
-documentation: "https://github.com/mrWheel/ota_manager#readme"
-issues: "https://github.com/mrWheel/ota_manager/issues"
-changelog: "https://github.com/mrWheel/ota_manager/blob/main/CHANGELOG.md"
+url: "https://github.com/mrWheel/ota_upload"
+repository: "https://github.com/mrWheel/ota_upload.git"
+documentation: "https://github.com/mrWheel/ota_upload#readme"
+issues: "https://github.com/mrWheel/ota_upload/issues"
+changelog: "https://github.com/mrWheel/ota_upload/blob/main/CHANGELOG.md"
 targets:
   - esp32
   - esp32s2

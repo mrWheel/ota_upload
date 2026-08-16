@@ -1,11 +1,11 @@
-# ota_manager development project
+# ota_upload development project
 
-This repository is a complete ESP-IDF development project for the `ota_manager`
+This repository is a complete ESP-IDF development project for the `ota_upload`
 component and its `idf.py ota` host integration.
 
 ## What is included
 
-- `components/ota_manager/` — publishable ESP-IDF component
+- `components/ota_upload/` — publishable ESP-IDF component
 - `main/` — runnable development/demo application
 - `examples/basic/` — self-contained Registry example
 - `host_tools/` — Python package that adds `idf.py ota`
@@ -21,6 +21,23 @@ a trusted development LAN.
 The first flash must be done over USB.
 
 ## Build the development project
+
+### Flash size
+
+This project uses an OTA partition table and requires a flash size of at least
+**4 MB**. The project default is set to 4 MB. If your board has a larger flash,
+you can select the actual size with:
+
+```bash
+idf.py menuconfig
+```
+
+Then open **Serial Flasher config** → **Flash size** and select **4 MB** or a
+larger value. Save the configuration and rebuild the project:
+
+```bash
+idf.py build
+```
 
 ### First flash (USB)
 
@@ -59,7 +76,7 @@ Then:
 
 ```bash
 idf.py --help
-idf.py ota --host ota-manager.local
+idf.py ota --host ota-upload.local
 ```
 
 `idf.py ota` locates the application binary from ESP-IDF build metadata.
@@ -69,10 +86,10 @@ idf.py ota --host ota-manager.local
 The publishable component is:
 
 ```text
-components/ota_manager/
+components/ota_upload/
 ```
 
 Before publication, replace placeholder repository/maintainer metadata in
-`components/ota_manager/idf_component.yml`.
+`components/ota_upload/idf_component.yml`.
 
-See `components/ota_manager/README.md`.
+See `components/ota_upload/README.md`.

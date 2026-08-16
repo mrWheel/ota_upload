@@ -1,6 +1,6 @@
-# ota_manager
+# ota_upload
 
-`ota_manager` is an ESP-IDF component for direct application firmware upload
+`ota_upload` is an ESP-IDF component for direct application firmware upload
 from a developer computer to an ESP32 on the same local network.
 
 It does **not** require an external firmware web server.
@@ -17,21 +17,21 @@ the OTA TCP port to untrusted networks.
 Eventually, after publication:
 
 ```bash
-idf.py add-dependency "mrwheel/ota_manager^0.1.0"
+idf.py add-dependency "mrwheel/ota_upload^0.1.0"
 ```
 
-For local development, the component can be placed in `components/ota_manager`.
+For local development, the component can be placed in `components/ota_upload`.
 
 ## Application API
 
 ```c
-ota_manager_config_t config = OTA_MANAGER_CONFIG_DEFAULT();
+ota_upload_config_t config = OTA_UPLOAD_CONFIG_DEFAULT();
 config.hostname = "mydevice";
 
-ESP_ERROR_CHECK(ota_manager_start(&config));
+ESP_ERROR_CHECK(ota_upload_start(&config));
 ```
 
-**Important:** The OTA manager must be started **after** the WiFi network interface
+**Important:** The OTA upload must be started **after** the WiFi network interface
 has acquired an IP address. Use the `IP_EVENT_STA_GOT_IP` event to ensure proper
 timing. This guarantees that mDNS initialization will succeed and the hostname
 will be properly advertised on the local network.
@@ -46,7 +46,9 @@ See the example `main.c` for the recommended event handler pattern.
 ## Partition table
 
 An OTA-capable partition table requires `otadata` plus at least two OTA app
-slots (`ota_0` and `ota_1`). See the included example.
+slots (`ota_0` and `ota_1`). The included OTA partition table requires a flash
+size of at least **4 MB**. Configure it with `idf.py menuconfig` under
+**Serial Flasher config** → **Flash size**, then select **4 MB** or larger.
 
 ## Wi-Fi provisioning
 

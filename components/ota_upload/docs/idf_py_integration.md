@@ -26,7 +26,7 @@ The package declares:
 
 ```toml
 [project.entry-points.idf_extension]
-ota_manager_ext = "ota_manager_tools.idf_ext:action_extensions"
+ota_upload_ext = "ota_upload_tools.idf_ext:action_extensions"
 ```
 
 After installation:

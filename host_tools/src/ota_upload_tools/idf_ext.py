@@ -68,7 +68,7 @@ def action_extensions(base_actions, project_path):
         "actions": {
             "ota": {
                 "callback": ota_action,
-                "help": "Upload the built application directly to ota_manager",
+                "help": "Upload the built application directly to ota_upload",
                 "options": [
                     {
                         "names": ["--host"],
