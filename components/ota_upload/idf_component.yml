@@ -1,6 +1,6 @@
 version: "0.1.0"
 description: "Direct local-network OTA firmware upload component for ESP-IDF"
-license: "GNU General Public License v3.0"
+license: "GPL-3.0-or-later"
 maintainers:
   - "Willem Aandewiel"
 tags:
@@ -9,10 +9,12 @@ tags:
   - firmware
   - development
 url: "https://github.com/mrWheel/ota_upload"
+repository_info:
+  path: "components/ota_upload"
 repository: "https://github.com/mrWheel/ota_upload.git"
-documentation: "https://github.com/mrWheel/ota_upload#readme"
+documentation: "https://github.com/mrWheel/ota_upload/tree/main/components/ota_upload"
 issues: "https://github.com/mrWheel/ota_upload/issues"
-changelog: "https://github.com/mrWheel/ota_upload/blob/main/CHANGELOG.md"
+changelog: "https://github.com/mrWheel/ota_upload/blob/main/components/ota_upload/CHANGELOG.md"
 targets:
   - esp32
   - esp32s2
