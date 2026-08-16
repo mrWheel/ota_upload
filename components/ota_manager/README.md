@@ -26,13 +26,17 @@ For local development, the component can be placed in `components/ota_manager`.
 
 ```c
 ota_manager_config_t config = OTA_MANAGER_CONFIG_DEFAULT();
-config.hostname = "";
+config.hostname = "mydevice";
 
 ESP_ERROR_CHECK(ota_manager_start(&config));
 ```
 
-The application must already have a working network connection before starting
-the OTA manager.
+**Important:** The OTA manager must be started **after** the WiFi network interface
+has acquired an IP address. Use the `IP_EVENT_STA_GOT_IP` event to ensure proper
+timing. This guarantees that mDNS initialization will succeed and the hostname
+will be properly advertised on the local network.
+
+See the example `main.c` for the recommended event handler pattern.
 
 ## Dependencies
 
@@ -78,13 +82,38 @@ See `docs/idf_py_integration.md`.
 
 ## mDNS
 
-The component advertises:
+The component advertises the configured hostname and the following mDNS services:
 
-```text
-_esp-ota._tcp
+| Service | Port | Purpose |
+|---------|------|---------|
+| `_esp-ota._tcp` | custom (default 3232) | OTA firmware update service |
+| `_http._tcp` | 80 | HTTP service (for future web interface and standard discovery) |
+| `_ssh._tcp` | 22 | SSH service (placeholder for future remote management) |
+
+**Hostname resolution:**
+
+Devices can be accessed by hostname:
+
+```bash
+ping mydevice.local
+idf.py ota --host mydevice.local
 ```
 
-and sets the configured mDNS hostname.
+**Service discovery:**
+
+Use standard mDNS browsing tools:
+
+```bash
+dns-sd -B _esp-ota._tcp local    # Find OTA devices
+dns-sd -B _http._tcp local       # Find HTTP services
+```
+
+**Timing requirement:**
+
+mDNS is only initialized after the WiFi interface has acquired an IP address
+(the `IP_EVENT_STA_GOT_IP` event). Attempting to resolve the hostname before
+this event will fail. This is by design to ensure the network stack is fully
+ready for mDNS operation.
 
 ## Security
 

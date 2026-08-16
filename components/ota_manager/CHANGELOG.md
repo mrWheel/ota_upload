@@ -11,8 +11,13 @@
 
 ### Network & Discovery
 - mDNS hostname support (`ota-manager-example.local`)
-- mDNS service advertisement (`_esp-ota._tcp`)
+- mDNS service advertisement:
+  - `_esp-ota._tcp` — OTA firmware update service
+  - `_http._tcp` — HTTP service (for future web interface and standard discovery)
+  - `_ssh._tcp` — SSH service (placeholder for future remote management)
 - Integration with `espressif/mdns` component
+- **Important:** mDNS initialization is deferred until `IP_EVENT_STA_GOT_IP` event
+  to ensure proper network stack readiness
 
 ### Wi-Fi Integration
 - Optional Wi-Fi provisioning via captive portal

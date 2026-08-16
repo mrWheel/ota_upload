@@ -19,7 +19,43 @@ Creates a configuration using Kconfig defaults.
 
 Starts mDNS (when enabled) and the OTA receiver task.
 
-The application must have network connectivity before calling this function.
+**Important timing requirement:** This function should be called only **after** the
+WiFi interface has acquired an IP address. Use the `IP_EVENT_STA_GOT_IP` event to
+ensure proper initialization order.
+
+**Why?** mDNS requires the network interface to be fully initialized with an IP
+address before it can advertise services and hostnames. Calling this function too
+early will cause mDNS initialization to fail or the hostname to not be resolvable.
+
+**Recommended pattern:**
+
+```c
+static void ip_event_handler(void *arg, esp_event_base_t event_base,
+                             int32_t event_id, void *event_data)
+{
+  if (event_id == IP_EVENT_STA_GOT_IP)
+  {
+    ota_manager_config_t config = OTA_MANAGER_CONFIG_DEFAULT();
+    config.hostname = "mydevice";
+    ESP_ERROR_CHECK(ota_manager_start(&config));
+  }
+}
+
+void app_main(void)
+{
+  // ... initialize WiFi provisioner ...
+  ESP_ERROR_CHECK(wifi_prov_init());  // Creates event loop
+  
+  // Register handler AFTER event loop exists
+  ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP,
+                                             &ip_event_handler, NULL));
+  
+  ESP_ERROR_CHECK(wifi_prov_start(&config));
+  // ... wait for connection ...
+}
+```
+
+See the `examples/basic/main/main.c` for a complete working example.
 
 ## `ota_manager_stop()`
 
