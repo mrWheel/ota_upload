@@ -1,0 +1,15 @@
+menu "Example configuration"
+
+config EXAMPLE_WIFI_SSID
+    string "Wi-Fi SSID"
+    default ""
+    help
+        SSID used by the ota_manager development application.
+
+config EXAMPLE_WIFI_PASSWORD
+    string "Wi-Fi password"
+    default ""
+    help
+        Password used by the ota_manager development application.
+
+endmenu

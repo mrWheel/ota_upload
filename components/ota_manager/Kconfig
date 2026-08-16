@@ -1,0 +1,26 @@
+menu "OTA Manager"
+
+config OTA_MANAGER_PORT
+    int "Default OTA TCP port"
+    range 1024 65535
+    default 3232
+
+config OTA_MANAGER_ENABLE_MDNS
+    bool "Enable mDNS advertisement"
+    default y
+
+config OTA_MANAGER_TASK_STACK_SIZE
+    int "OTA receiver task stack size"
+    range 4096 16384
+    default 6144
+
+config OTA_MANAGER_TASK_PRIORITY
+    int "OTA receiver task priority"
+    range 1 24
+    default 5
+
+config OTA_MANAGER_REBOOT_AFTER_UPDATE
+    bool "Reboot after successful OTA update"
+    default y
+
+endmenu

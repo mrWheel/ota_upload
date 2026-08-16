@@ -1,0 +1,7 @@
+Before publishing:
+1. Confirm that https://github.com/mrWheel/ota_manager is the desired repository.
+2. Confirm the Registry namespace (the examples currently say mrwheel).
+3. Add maintainer email if desired.
+4. Run: compote manifest lint components/ota_manager
+5. Build/test all intended ESP-IDF targets.
+6. Review security limitations before calling v0.1.0 production-ready.

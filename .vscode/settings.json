@@ -1,0 +1,17 @@
+{
+  "idf.currentSetup": "/Users/willema/.espressif/v6.0.2/esp-idf",
+  "idf.customExtraVars": {
+    "IDF_TARGET": "esp32"
+  },
+  "clangd.path": "/Users/willema/.espressif/tools/esp-clang/esp-20.1.1_20250829/esp-clang/bin/clangd",
+  "clangd.arguments": [
+    "--background-index",
+    "--query-driver=**",
+    "--compile-commands-dir=/Users/willema/Documents/espidfProjects/ota_manager_project/build"
+  ],
+  "idf.flashType": "UART",
+  "idf.port": "/dev/tty.usbserial-1430",
+  "idf.openOcdConfigs": [
+    "board/esp32-wrover-kit-3.3v.cfg"
+  ]
+}

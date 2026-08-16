@@ -1,0 +1,23 @@
+menu "Example configuration"
+
+config EXAMPLE_USE_WIFI_PROVISIONING
+    bool "Use Wi-Fi provisioning"
+    default y
+    help
+        Enable Wi-Fi provisioning via BLE/SoftAP instead of hardcoded credentials.
+
+config EXAMPLE_WIFI_SSID
+    string "Wi-Fi SSID"
+    default ""
+    depends on !EXAMPLE_USE_WIFI_PROVISIONING
+    help
+        SSID used by the ota_manager development application (when provisioning disabled).
+
+config EXAMPLE_WIFI_PASSWORD
+    string "Wi-Fi password"
+    default ""
+    depends on !EXAMPLE_USE_WIFI_PROVISIONING
+    help
+        Password used by the ota_manager development application (when provisioning disabled).
+
+endmenu

@@ -1,0 +1,30 @@
+version: "0.1.0"
+description: "Direct local-network OTA firmware upload component for ESP-IDF"
+license: "GNU General Public License v3.0"
+maintainers:
+  - "Willem Aandewiel"
+tags:
+  - ota
+  - wifi
+  - firmware
+  - development
+url: "https://github.com/mrWheel/ota_manager"
+repository: "https://github.com/mrWheel/ota_manager.git"
+documentation: "https://github.com/mrWheel/ota_manager#readme"
+issues: "https://github.com/mrWheel/ota_manager/issues"
+changelog: "https://github.com/mrWheel/ota_manager/blob/main/CHANGELOG.md"
+targets:
+  - esp32
+  - esp32s2
+  - esp32s3
+  - esp32c3
+  - esp32c6
+dependencies:
+  idf:
+    version: ">=5.3"
+  espressif/mdns:
+    version: "^1.8.2"
+  michmich/esp-idf-wifi-provisioner:
+    version: "^0.4.0"
+files:
+  use_gitignore: true

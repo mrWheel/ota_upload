@@ -1,0 +1,3 @@
+dependencies:
+  ota_manager:
+    override_path: ../../..

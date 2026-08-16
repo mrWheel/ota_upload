@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ota-manager-tools"
+version = "0.1.0"
+description = "Host-side tools and idf.py extension for ota_manager"
+requires-python = ">=3.9"
+dependencies = []
+
+[project.scripts]
+ota-upload = "ota_manager_tools.uploader:main"
+
+[project.entry-points.idf_extension]
+ota_manager_ext = "ota_manager_tools.idf_ext:action_extensions"
+
+[tool.setuptools.packages.find]
+where = ["src"]
