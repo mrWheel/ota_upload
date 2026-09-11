@@ -1,4 +1,4 @@
-version: "0.1.0"
+version: "1.0.0"
 description: "Direct local-network OTA firmware upload component for ESP-IDF"
 license: "GPL-3.0-or-later"
 maintainers:

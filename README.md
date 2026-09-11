@@ -14,7 +14,7 @@ component and its `idf.py ota` host integration.
 
 ## Important
 
-This is a functional project skeleton, not a claim that v0.1.0 is production-secure.
+This is a functional development project, not a claim that v1.0.0 is production-secure.
 The initial OTA protocol is deliberately simple and unauthenticated. Use it only on
 a trusted development LAN.
 
@@ -49,17 +49,27 @@ idf.py -p /dev/cu.YOUR_PORT flash monitor
 
 ### Wi-Fi setup
 
-**By default:** The device starts Wi-Fi provisioning (captive portal):
-- Look for the provisioning AP in your Wi-Fi networks
-- Connect and open the captive portal to configure Wi-Fi
-- Device reboots and connects automatically
+The root development application uses the SSID and password configured through
+`CONFIG_EXAMPLE_WIFI_SSID` and `CONFIG_EXAMPLE_WIFI_PASSWORD`. It starts in
+station mode and waits for that network to provide an IP address.
 
-**Optional:** To use hardcoded credentials instead:
+For the self-contained provisioning workflow, use the basic example instead:
+
+```bash
+cd components/ota_upload/examples/basic
+idf.py build
+idf.py flash monitor
+```
+
+The basic example uses a provisioning portal by default. On first boot, connect
+to the `ESP-Provision` access point and configure the target Wi-Fi network.
+
+To use hardcoded credentials in the basic example instead:
 
 ```bash
 idf.py menuconfig
-# Example configuration → Use Wi-Fi provisioning → disable
-# Then set: Wi-Fi SSID / Wi-Fi password
+# Example configuration -> Use Wi-Fi provisioning -> disable
+# Then set the Wi-Fi SSID and password
 idf.py build
 idf.py -p /dev/cu.YOUR_PORT flash monitor
 ```
@@ -76,10 +86,25 @@ Then:
 
 ```bash
 idf.py --help
-idf.py ota --host ota-upload.local
+idf.py ota --host <hostname-or-ip>
 ```
 
-`idf.py ota` locates the application binary from ESP-IDF build metadata.
+`idf.py ota` requires the target hostname or IP address and locates the
+application binary from ESP-IDF build metadata. Host-side mDNS discovery and
+interactive device selection are not implemented yet. The ESP32 advertises
+`_esp-ota._tcp` for discovery with tools such as `dns-sd`.
+
+The OTA preparation callback can quiesce application work before flash writing
+and image validation:
+
+```c
+ota_upload_config_t config = OTA_UPLOAD_CONFIG_DEFAULT();
+config.hostname = "mydevice";
+config.prepare_cb = application_prepare_for_ota;
+config.prepare_ctx = &application_state;
+
+ESP_ERROR_CHECK(ota_upload_start(&config));
+```
 
 ## Registry publication
 

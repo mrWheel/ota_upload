@@ -7,7 +7,7 @@ It does **not** require an external firmware web server.
 
 ## Status
 
-Version `0.1.0` is a development-oriented implementation/skeleton.
+Version `1.0.0` is a development-oriented implementation.
 
 The current protocol is intentionally simple and unauthenticated. Do not expose
 the OTA TCP port to untrusted networks.
@@ -17,7 +17,7 @@ the OTA TCP port to untrusted networks.
 Eventually, after publication:
 
 ```bash
-idf.py add-dependency "mrwheel/ota_upload^0.1.0"
+idf.py add-dependency "mrwheel/ota_upload^1.0.0"
 ```
 
 For local development, the component can be placed in `components/ota_upload`.

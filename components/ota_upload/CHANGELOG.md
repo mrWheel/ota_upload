@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.0
+
+### Core Features
+- Stable direct TCP OTA upload workflow for ESP-IDF
+- Optional OTA preparation callback before `esp_ota_begin()`
+- Callback-aware basic example with visible `ESP_OK` verification
+- Updated API, host-tool, and workflow documentation
+
 ## 0.1.0
 
 ### Core Features

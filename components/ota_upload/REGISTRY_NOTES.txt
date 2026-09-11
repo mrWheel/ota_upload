@@ -1,7 +1,59 @@
+## Version 1.0.0 publication
+
 Before publishing:
-1. Confirm that https://github.com/mrWheel/ota_upload is the desired repository.
-2. Confirm the Registry namespace (the examples currently say mrwheel).
-3. Add maintainer email if desired.
-4. Run: compote manifest lint components/ota_upload
-5. Build/test all intended ESP-IDF targets.
-6. Review security limitations before calling v0.1.0 production-ready.
+
+1. Confirm that `https://github.com/mrWheel/ota_upload` is the desired public
+	repository and that `mrwheel` is the correct Espressif Components Registry
+	namespace.
+2. Confirm the component manifest and review the security limitations. The OTA
+	protocol is unauthenticated and intended for a trusted development LAN.
+3. Build and test the component and the `examples/basic` project.
+4. Add and push the release commit and Git tag:
+
+	```bash
+	git add .
+	git commit -m "Release ota_upload 1.0.0"
+	git tag -a v1.0.0 -m "ota_upload 1.0.0"
+	git push origin main
+	git push origin v1.0.0
+	```
+
+5. Configure the Component Registry API token without putting it in source
+	control. Use the token supplied by the Espressif Components Registry:
+
+	```bash
+	python -m idf_component_manager config set \
+	  --default-namespace mrwheel \
+	  --api-token <registry-api-token>
+	```
+
+6. Validate the archive without publishing it:
+
+	```bash
+	python -m idf_component_manager component upload \
+	  --project-dir components/ota_upload \
+	  --namespace mrwheel \
+	  --name ota_upload \
+	  --archive components/ota_upload/dist/ota_upload_1.0.0.tgz \
+	  --dry-run
+	```
+
+7. Publish the validated archive:
+
+	```bash
+	python -m idf_component_manager component upload \
+	  --project-dir components/ota_upload \
+	  --namespace mrwheel \
+	  --name ota_upload \
+	  --archive components/ota_upload/dist/ota_upload_1.0.0.tgz
+	```
+
+8. Check the upload job status using the job ID printed by the upload command:
+
+	```bash
+	python -m idf_component_manager component upload-status --job <job-id>
+	```
+
+The registry release is immutable. Publish `1.0.0` only after the source,
+manifest, archive, documentation, and tag have been reviewed. Later corrections
+require a new version such as `1.0.1`.

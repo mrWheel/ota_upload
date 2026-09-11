@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ota-upload-tools"
-version = "0.1.0"
+version = "1.0.0"
 description = "Host-side tools and idf.py extension for ota_upload"
 requires-python = ">=3.9"
 dependencies = []

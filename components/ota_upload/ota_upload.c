@@ -104,7 +104,23 @@ static esp_err_t handle_upload(int client_sock)
            image_size, update_partition->label);
 
   esp_ota_handle_t ota_handle = 0;
-  esp_err_t err = esp_ota_begin(update_partition, image_size, &ota_handle);
+  esp_err_t err = ESP_OK;
+
+  if (active_config.prepare_cb != NULL)
+  {
+    ESP_LOGI(tag, "Preparing application for OTA");
+    err = active_config.prepare_cb(active_config.prepare_ctx);
+    if (err != ESP_OK)
+    {
+      ESP_LOGE(tag, "OTA preparation failed: %s", esp_err_to_name(err));
+      send_status(client_sock, "ERR prepare\n");
+      return err;
+    }
+
+    ESP_LOGI(tag, "Application is ready for OTA");
+  }
+
+  err = esp_ota_begin(update_partition, image_size, &ota_handle);
   if (err != ESP_OK)
   {
     send_status(client_sock, "ERR ota_begin\n");
@@ -282,7 +298,7 @@ esp_err_t ota_upload_stop(void)
   }
 
   /*
-   * v0.1.0 skeleton: stopping a task blocked in accept() requires retaining
+  * v1.0.0: stopping a task blocked in accept() requires retaining
    * the listening socket and shutting it down from here. Keep the public API
    * now, but report unsupported until graceful socket shutdown is completed.
    */

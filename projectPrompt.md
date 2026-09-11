@@ -168,7 +168,7 @@ At minimum it must provide enough information to safely transfer:
 
 Design the protocol so it can be extended later without unnecessarily breaking compatibility.
 
-Do not invent unnecessary complexity for v0.1.0.
+Do not invent unnecessary complexity for v1.0.0.
 
 ---
 
@@ -226,7 +226,9 @@ _esp-ota._tcp
 
 The exact service name must be documented and consistently used by both the embedded component and the host-side discovery tool.
 
-Do not assume that resolving `hostname.local` alone is sufficient for discovery of multiple devices.
+The component advertises the `_esp-ota._tcp` service so standard mDNS tools can
+list OTA-capable devices. The current host tool does not perform discovery or
+interactive selection; the user supplies the selected hostname or IP address.
 
 ---
 
@@ -267,71 +269,43 @@ The preferred user experience is integration with `idf.py`.
 
 ## 10. `idf.py` integration — major requirement
 
-The desired developer workflow is:
+The implemented developer workflow is:
 
 ```bash
 idf.py build
 idf.py ota --host thisProject.local
 ```
 
-and ultimately, where practical:
+The current implementation does not support:
 
 ```bash
 idf.py ota
 ```
 
-The `ota` command should:
+The current `ota` command:
 
-1. ensure/configure the project as necessary;
-2. locate the built application firmware automatically;
-3. obtain the application `.bin` path from ESP-IDF build metadata rather than guessing the project name if practical;
-4. discover OTA-capable devices using mDNS when no host is specified;
-5. automatically select the device if exactly one suitable device is found;
-6. present a selection when multiple devices are found;
-7. upload the application image;
-8. show upload progress;
-9. report validation;
-10. report reboot/success.
+1. locate the built application firmware from `build/project_description.json`;
+2. require the target hostname or IP address through `--host`;
+3. upload the application image;
+4. show upload progress;
+5. report device-side validation and success/failure.
+
+Host-side mDNS discovery and interactive device selection are not implemented in
+the current version. Use `dns-sd -B _esp-ota._tcp local` to inspect advertised
+devices, then pass the selected hostname or IP address with `--host`.
 
 Example:
 
 ```text
-$ idf.py ota
-
-Searching for OTA devices...
-
-Found:
-  [1] thisProject.local       192.168.1.42
-  [2] test_project.local    192.168.1.57
-
-Select device [1-2]: 1
+$ idf.py ota --host thisProject.local
 
 Firmware:
   build/thisProject.bin
   Size: 1,247,632 bytes
 
-Connecting to thisProject.local...
 Uploading: [==============================] 100%
 
-Firmware validated.
 OTA successful.
-Rebooting device...
-```
-
-If only one device is found:
-
-```text
-$ idf.py ota
-
-Searching for OTA devices...
-Found thisProject.local (192.168.1.42)
-
-Firmware: build/thisProject.bin
-Uploading: [==============================] 100%
-
-Firmware validated.
-OTA successful.
-Rebooting device...
 ```
 
 ---
@@ -404,29 +378,19 @@ Do not require users to globally enable loading of arbitrary untrusted ESP-IDF c
 
 ## 12. Build artifact discovery
 
-Do not unnecessarily require this:
-
-```bash
-idf.py ota --host thisProject.local build/thisProject.bin
-```
-
 The `idf.py ota` extension should determine the correct application binary automatically from the ESP-IDF project/build information.
 
-It must work when the application/project name is not known in advance.
+The current implementation obtains the application binary from
+`build/project_description.json`, so the application/project name does not need
+to be hardcoded in the host tool.
 
-Support a non-default build directory if ESP-IDF exposes that information to the extension.
+The extension uses ESP-IDF's configured project and build directories when they
+are provided by `idf.py`.
 
 If the firmware has not yet been built, produce a clear message.
 
-Optionally investigate whether:
-
-```bash
-idf.py ota
-```
-
-can depend on or trigger the normal build action cleanly using the official `idf.py` extension API.
-
-Do not implement fragile shell invocation of `idf.py build` if the extension framework provides a proper dependency mechanism.
+The extension does not build the firmware automatically. Run `idf.py build`
+before `idf.py ota`.
 
 ---
 
@@ -529,7 +493,7 @@ Document approximate RAM overhead.
 
 ## 17. Security
 
-Version `0.1.0` is primarily intended for development on a trusted local network.
+Version `1.0.0` is primarily intended for development on a trusted local network.
 
 Nevertheless, do not design the protocol so badly that security cannot be added later.
 
@@ -544,15 +508,15 @@ Design the protocol/API so later versions can add:
 - secure boot compatibility;
 - flash encryption compatibility.
 
-Do not falsely claim that v0.1.0 is production-secure if authentication/encryption is not implemented.
+Do not falsely claim that v1.0.0 is production-secure if authentication/encryption is not implemented.
 
 ---
 
-## 18. Initial v0.1.0 scope
+## 18. v1.0.0 scope
 
-Target the following for v0.1.0:
+Target the following for v1.0.0:
 
-| Feature | v0.1.0 |
+| Feature | v1.0.0 |
 |---|---|
 | Direct development computer -> ESP32 OTA | Yes |
 | External web server required | No |
@@ -560,14 +524,14 @@ Target the following for v0.1.0:
 | `ota_0` / `ota_1` support | Yes |
 | TCP firmware upload | Yes |
 | mDNS hostname | Yes |
-| mDNS OTA service discovery | Yes |
+| mDNS OTA service advertising | Yes |
 | Upload progress | Yes |
 | ESP-IDF image validation | Yes |
 | Automatic reboot | Yes |
 | `Kconfig` | Yes |
 | `ESP_LOGx` logging | Yes |
 | Python host uploader | Yes |
-| `idf.py ota` integration | Yes, subject to correct trusted extension architecture |
+| `idf.py ota --host <hostname-or-ip>` integration | Yes, through the installed host package |
 | Basic example | Yes |
 | README | Yes |
 | API documentation | Yes |
@@ -664,7 +628,7 @@ Create a proper Registry manifest.
 It should include at least appropriate values for:
 
 ```yaml
-version: "0.1.0"
+version: "1.0.0"
 description: "..."
 license: "MIT"
 
@@ -728,7 +692,7 @@ The documentation should lead toward a workflow similar to:
 ### Add the component
 
 ```bash
-idf.py add-dependency "mrwheel/ota_upload^0.1.0"
+idf.py add-dependency "mrwheel/ota_upload^1.0.0"
 ```
 
 The exact namespace must be replaced by the actual Registry namespace when known.
@@ -750,12 +714,6 @@ idf.py flash monitor
 
 ```bash
 idf.py build
-idf.py ota
-```
-
-or:
-
-```bash
 idf.py ota --host thisProject.local
 ```
 
@@ -784,8 +742,8 @@ Include:
 - required partition table;
 - first USB flash;
 - OTA workflow;
-- `idf.py ota`;
-- mDNS discovery;
+  - `idf.py ota --host <hostname-or-ip>`;
+  - mDNS hostname and service advertising;
 - troubleshooting;
 - security warning;
 - links to detailed docs.
@@ -800,7 +758,7 @@ Document the OTA wire protocol sufficiently that another developer could impleme
 
 ### `docs/security.md`
 
-Explain the v0.1.0 threat model and limitations.
+Explain the v1.0.0 threat model and limitations.
 
 ### `docs/idf_py_integration.md`
 
@@ -808,7 +766,7 @@ Explain exactly how the `idf.py ota` integration works, how it is installed, and
 
 ### `CHANGELOG.md`
 
-Start with `0.1.0`.
+Start with `1.0.0`.
 
 ---
 
@@ -912,11 +870,11 @@ The most important usability goal is:
 
 > After the first USB installation, OTA flashing should feel like a normal ESP-IDF development operation rather than a separate firmware-distribution system.
 
-The desired end result is:
+The implemented end result is:
 
 ```bash
 idf.py build
-idf.py ota
+idf.py ota --host <hostname-or-ip>
 ```
 
 not:
@@ -927,7 +885,8 @@ python managed_components/mrwheel__ota_upload/tools/ota_upload.py \
     build/thisProject.bin
 ```
 
-The Python uploader is an implementation detail.
+The Python uploader is also available as a direct command, but the documented
+developer interface is the installed `idf.py ota` extension.
 
 The developer should normally interact with `idf.py`.
 
@@ -966,7 +925,7 @@ Produce a complete repository ready for development and eventual publication, co
 9. example OTA partition table;
 10. Python host uploader;
 11. safe `idf.py ota` integration;
-12. device discovery;
+  12. mDNS service advertising;
 13. progress/error reporting;
 14. README;
 15. API documentation;

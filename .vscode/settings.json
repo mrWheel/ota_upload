@@ -10,7 +10,7 @@
     "--compile-commands-dir=/Users/willema/Documents/espidfProjects/ota_upload/build"
   ],
   "idf.flashType": "UART",
-  "idf.port": "/dev/tty.usbserial-1430",
+  "idf.port": "/dev/tty.usbserial-20240",
   "idf.openOcdConfigs": [
     "board/esp32-wrover-kit-3.3v.cfg"
   ]

@@ -80,6 +80,22 @@ idf.py ota --host 192.168.x.x
 
 The device will validate and reboot with the new firmware.
 
+The monitor should show the callback test during startup:
+
+```text
+ota_example: OTA prepare callback invoked
+ota_example: OTA prepare callback test returned: ESP_OK
+```
+
+During an OTA upload, the same callback is invoked by the OTA task before
+`esp_ota_begin()`:
+
+```text
+ota_upload: Preparing application for OTA
+ota_example: OTA prepare callback invoked
+ota_upload: Application is ready for OTA
+```
+
 ## Troubleshooting
 
 ### mDNS hostname not resolving

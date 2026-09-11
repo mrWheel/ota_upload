@@ -13,6 +13,12 @@
 static const char *tag = "ota_example";
 static bool ota_upload_started = false;
 
+static esp_err_t example_prepare_for_ota(void *ctx)
+{
+  ESP_LOGI(tag, "OTA prepare callback invoked");
+  return ESP_OK;
+}
+
 //-- Start OTA upload when IP address is acquired
 static void ip_event_handler(void *arg, esp_event_base_t event_base,
                              int32_t event_id, void *event_data)
@@ -28,6 +34,7 @@ static void ip_event_handler(void *arg, esp_event_base_t event_base,
     {
       ota_upload_config_t ota_config = OTA_UPLOAD_CONFIG_DEFAULT();
       ota_config.hostname = "ota-upload-example";
+      ota_config.prepare_cb = example_prepare_for_ota;
 
       ESP_LOGI(tag, "Starting OTA upload with hostname: %s", ota_config.hostname);
       esp_err_t err = ota_upload_start(&ota_config);
@@ -75,6 +82,11 @@ static esp_err_t wifi_start(void)
 
 void app_main(void)
 {
+  esp_err_t callback_result = example_prepare_for_ota(NULL);
+  ESP_LOGI(tag, "OTA prepare callback test returned: %s",
+           esp_err_to_name(callback_result));
+  ESP_ERROR_CHECK(callback_result);
+
   ESP_ERROR_CHECK(wifi_start());
 
   //-- OTA upload will be started by the IP event handler once IP is acquired

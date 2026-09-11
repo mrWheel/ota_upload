@@ -1,6 +1,6 @@
 # Security
 
-Version 0.1.0 is intended for development on a trusted local network.
+Version 1.0.0 is intended for development on a trusted local network.
 
 The initial TCP protocol has no authentication, encryption, or authorization.
 Anyone who can reach the OTA port may attempt to upload firmware.
